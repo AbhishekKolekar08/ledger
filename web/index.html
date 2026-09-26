@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#123b35">
+    <title>Ledger | Credit cycle budget</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Ledger home">
+        <span class="brand-mark" aria-hidden="true">L</span>
+        <span>Ledger<span class="brand-period">.</span></span>
+      </a>
+      <div class="topbar-meta">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>Credit cycle planner</span>
+      </div>
+      <button class="export-button" id="exportCsv" type="button" title="Download budget and transaction CSV">
+        <span aria-hidden="true">↓</span> Export CSV
+      </button>
+    </header>
+
+    <main id="top" class="page-shell">
+      <section class="intro-row" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">PERSONAL CASH FLOW / SEK</p>
+          <h1 id="page-title">Your cycle,<br><em>in focus.</em></h1>
+        </div>
+        <p class="intro-copy">See what is truly available after payday, fixed costs, and the balance you bring forward.</p>
+      </section>
+
+      <section class="cycle-bar" aria-label="Credit card cycle dates">
+        <div class="cycle-mark"><span class="cycle-mark-icon" aria-hidden="true">↻</span></div>
+        <div class="cycle-caption">
+          <span class="eyebrow">CARD CYCLE</span>
+          <strong id="cycleLabel">Set your dates</strong>
+        </div>
+        <label class="date-field">
+          <span>From</span>
+          <input id="cycleStart" type="date" aria-label="Cycle start date">
+        </label>
+        <span class="date-arrow" aria-hidden="true">→</span>
+        <label class="date-field">
+          <span>Through</span>
+          <input id="cycleEnd" type="date" aria-label="Cycle end date">
+        </label>
+        <span class="cycle-days" id="daysLeft">-- days left</span>
+      </section>
+
+      <div class="dashboard-grid">
+        <div class="left-column">
+          <section class="funding-section" aria-labelledby="funding-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">THE PLAN</p>
+                <h2 id="funding-title">Money coming in</h2>
+              </div>
+              <span class="edit-note">Editable anytime</span>
+            </div>
+
+            <div class="funding-table">
+              <label class="money-row income-row" for="income">
+                <span class="money-label"><span class="money-icon income-icon" aria-hidden="true">↗</span><span>Monthly take-home pay</span></span>
+                <span class="money-input-wrap"><input id="income" data-budget type="number" min="0" step="0.01" inputmode="decimal"><span>kr</span></span>
+              </label>
+              <label class="money-row available-row" for="openingBalance">
+                <span class="money-label"><span class="money-icon balance-icon" aria-hidden="true">+</span><span>Unspent balance brought forward</span></span>
+                <span class="money-input-wrap"><input id="openingBalance" data-budget type="number" min="0" step="0.01" inputmode="decimal"><span>kr</span></span>
+              </label>
+              <div class="table-rule"><span>Set aside before everyday spending</span></div>
+              <label class="money-row deduction-row" for="fixedCosts">
+                <span class="money-label"><span class="money-icon fixed-icon" aria-hidden="true">−</span><span>Fixed costs paid from payday</span></span>
+                <span class="money-input-wrap"><input id="fixedCosts" data-budget type="number" min="0" step="0.01" inputmode="decimal"><span>kr</span></span>
+              </label>
+              <label class="money-row deduction-row" for="buffer">
+                <span class="money-label"><span class="money-icon buffer-icon" aria-hidden="true">−</span><span>Leave aside (optional)</span></span>
+                <span class="money-input-wrap"><input id="buffer" data-budget type="number" min="0" step="0.01" inputmode="decimal"><span>kr</span></span>
+              </label>
+              <label class="money-row deduction-row" for="carryover">
+                <span class="money-label"><span class="money-icon carry-icon" aria-hidden="true">−</span><span>Overspend carried from last cycle</span></span>
+                <span class="money-input-wrap"><input id="carryover" data-budget type="number" min="0" step="0.01" inputmode="decimal"><span>kr</span></span>
+              </label>
+            </div>
+            <p class="local-note"><span aria-hidden="true">◉</span> Loading this computer's budget data...</p>
+          </section>
+
+          <section class="transactions-section" aria-labelledby="transactions-title">
+            <div class="section-heading transaction-heading">
+              <div>
+                <p class="eyebrow">DAY-TO-DAY</p>
+                <h2 id="transactions-title">Log an expense</h2>
+              </div>
+              <span class="transaction-count" id="transactionCount">0 entries</span>
+            </div>
+            <form id="transactionForm" class="transaction-form">
+              <label class="form-field amount-field">
+                <span>Amount</span>
+                <span class="amount-entry"><input id="expenseAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required><span>kr</span></span>
+              </label>
+              <label class="form-field description-field">
+                <span>What was it?</span>
+                <input id="expenseLabel" type="text" maxlength="60" placeholder="Groceries, lunch..." required>
+              </label>
+              <label class="form-field category-field">
+                <span>Category</span>
+                <select id="expenseCategory">
+                  <option value="groceries">Groceries</option>
+                  <option value="eating_out">Eating out</option>
+                  <option value="transport">Transport</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="shopping">Shopping</option>
+                  <option value="bills_other">Other bills</option>
+                  <option value="health">Healthcare</option>
+                  <option value="misc">Miscellaneous</option>
+                </select>
+              </label>
+              <button class="add-button" type="submit"><span aria-hidden="true">+</span> Add expense</button>
+            </form>
+
+            <div class="ledger-heading">
+              <span>Recent expenses</span>
+              <span id="spentCaption">Current cycle</span>
+            </div>
+            <div class="transaction-list" id="transactionList" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <aside class="right-column" aria-label="Budget summary">
+          <section class="result-panel" aria-labelledby="result-title">
+            <div class="result-topline">
+              <span class="eyebrow">READY FOR EVERYDAY SPENDING</span>
+              <span class="status-spark" aria-hidden="true">✳</span>
+            </div>
+            <h2 id="result-title">Your cycle limit</h2>
+            <p class="limit-amount" id="cycleLimit">—</p>
+            <div class="formula-caption">Pay + brought forward − reserved amounts</div>
+            <div class="result-divider"></div>
+            <div class="remaining-line">
+              <span>Still available</span>
+              <strong id="remaining">—</strong>
+            </div>
+            <div class="progress-track" role="progressbar" aria-label="Cycle budget used" aria-valuemin="0" aria-valuemax="100" id="budgetProgress">
+              <span id="progressFill"></span>
+            </div>
+            <div class="progress-labels"><span id="spentLabel">Spent 0 kr</span><span id="limitLabel">0% used</span></div>
+            <div class="daily-callout">
+              <span class="daily-icon" aria-hidden="true">⌁</span>
+              <span><small>Safe pace from today</small><strong id="weeklyAllowance">—</strong></span>
+              <span class="daily-unit">per week</span>
+            </div>
+            <p class="funding-warning" id="fundingWarning" hidden></p>
+          </section>
+
+          <section class="category-section" aria-labelledby="category-title">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">WHERE IT GOES</p>
+                <h2 id="category-title">Spending mix</h2>
+              </div>
+            </div>
+            <div id="categoryBreakdown" class="category-breakdown"></div>
+          </section>
+        </aside>
+      </div>
+      <footer class="page-footer"><span>Ledger / cycle budget</span><span>Calculated in Rust · WebAssembly</span></footer>
+    </main>
+  </body>
+</html>
