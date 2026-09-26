@@ -26,7 +26,7 @@ if (Buffer.byteLength(serialized, "utf8") > 1_800_000) {
 }
 
 const sqlLiteral = (value) => `'${String(value).replaceAll("'", "''")}'`;
-const sql = `INSERT INTO ledger_state (owner_email, state_json, updated_at) VALUES (${sqlLiteral(email)}, ${sqlLiteral(serialized)}, CURRENT_TIMESTAMP) ON CONFLICT(owner_email) DO NOTHING;\n`;
+const sql = `INSERT INTO ledger_state (owner_email, state_json, updated_at) VALUES (${sqlLiteral(email)}, ${sqlLiteral(serialized)}, CURRENT_TIMESTAMP) ON CONFLICT(owner_email) DO UPDATE SET state_json = excluded.state_json, updated_at = CURRENT_TIMESTAMP WHERE json_array_length(json_extract(ledger_state.state_json, '$.transactions')) = 0;\n`;
 const tempDirectory = await mkdtemp(join(tmpdir(), "ledger-d1-import-"));
 const tempSqlPath = join(tempDirectory, "import.sql");
 
@@ -39,7 +39,7 @@ try {
     shell: process.platform === "win32",
   });
   console.log(`Imported ${state.transactions.length} transactions for ${email}.`);
-  console.log("This import only inserts if this account has no existing Ledger row.");
+  console.log("The import fills a missing or empty account row and never overwrites existing transactions.");
 } finally {
   await rm(tempDirectory, { recursive: true, force: true });
 }

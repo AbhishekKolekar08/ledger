@@ -52,7 +52,7 @@ Alternatively, from a logged-in terminal, use `npx wrangler secret put ACCESS_TE
 
 ## 5. Import local data once
 
-After the Access-protected Worker is deployed and the D1 migration is applied, import the local JSON store from this machine **before opening Ledger for the first time**. This writes a temporary SQL file in the system temp directory, invokes Wrangler against the remote D1 database, then removes the temporary file. The SQL uses `ON CONFLICT DO NOTHING` so it will not overwrite existing remote Ledger data.
+After the Access-protected Worker is deployed and the D1 migration is applied, import the local JSON store from this machine. This writes a temporary SQL file in the system temp directory, invokes Wrangler against the remote D1 database, then removes the temporary file. The import fills a missing row or replaces an empty state, but will not overwrite a remote state that already contains transactions.
 
 ```powershell
 $env:LEDGER_EMAIL = "the-same-email-as-ALLOWED_EMAIL"
