@@ -1,0 +1,18 @@
+{
+  "name": "ledger-budget-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test tests/*.test.js",
+    "db:create": "wrangler d1 create ledger",
+    "db:migrate:local": "wrangler d1 migrations apply ledger --local",
+    "db:migrate:remote": "wrangler d1 migrations apply ledger --remote",
+    "data:import": "node scripts/import-ledger-data.mjs",
+    "build:wasm": "powershell -ExecutionPolicy Bypass -File web/build-wasm.ps1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.141.0"
+  }
+}

@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS ledger_state (
+    owner_email TEXT PRIMARY KEY NOT NULL,
+    state_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

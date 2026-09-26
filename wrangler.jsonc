@@ -1,0 +1,19 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "ledger",
+	"main": "web/worker.js",
+	"compatibility_date": "2026-09-26",
+	"assets": {
+		"directory": "./web",
+		"binding": "ASSETS",
+		"run_worker_first": true
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "ledger",
+			"database_id": "712402c1-2a91-4780-b0c1-8247a11c866a",
+			"migrations_dir": "migrations"
+		}
+	]
+}
