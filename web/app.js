@@ -318,7 +318,6 @@ async function start() {
     syncInputsFromState();
     saveState();
     renderBudget();
-    document.querySelector(".local-note").innerHTML = "<span aria-hidden=\"true\">◉</span> Saved to this computer in <code>.ledger_data.json</code>.";
   } catch (error) {
     document.querySelector(".local-note").textContent = `Using browser-only data: ${error.message}`;
   }
